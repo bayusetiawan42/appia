@@ -1,4 +1,4 @@
-boot.bin:
+boot.bin: boot.asm print.asm
 	nasm -fbin boot.asm -o boot.bin
 
 .PHONY: qemu clean

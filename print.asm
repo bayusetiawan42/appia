@@ -5,21 +5,21 @@ print:
 
 .putchar:
 	cmp [bx], 0
-	jz print.end
+	jz .end
 
 	cmp [bx], 0xa
-	je print.newline
+	je .newline
 
 	mov al, [bx]
 	int 0x10
 
 	inc bx
-	jmp print.putchar
+	jmp .putchar
 .newline:
 	call print_nl
 
 	inc bx
-	jmp print.putchar
+	jmp .putchar
 
 .end:
 	popa
@@ -31,17 +31,17 @@ print_word:
 	mov cx, 0
 .loop:
 	cmp cx, 4                    ; while (cx < 4)
-	je print_word.end
+	je .end
 
 	; Convert to ASCII
 	mov ax, dx
 	and ax, 0x000f               ; 0x1234 -> 0x0004
 	add al, 0x30                 ; convert to ASCII 1-9
 	cmp al, 0x39                 ; if N > 9  add extra 8 to represent 'A' - 'F'
-	jle print_word.modif_word
+	jle .modif_word
 	add al, 7                    ; ASCII A-Z is 0x41-0x46. Added 7 so it became 0x40
 .modif_word:
-	mov bx, print_word.HEX_OUT + 5
+	mov bx, .HEX_OUT + 5
 	sub bx, cx
 	; replace *bx position with ASCII from al
 	mov [bx], al 
@@ -49,11 +49,11 @@ print_word:
 	            ; so rotate 4 times 0x1234 -> 0x4123 -> 0x3412 -> 0x2341 -> 0x1234
 
 	inc cx
-	jmp print_word.loop
+	jmp .loop
 
 .end:
 	; print final modified HEX_OUT
-	mov bx, print_word.HEX_OUT
+	mov bx, .HEX_OUT
 	call print
 
 	popa

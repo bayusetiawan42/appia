@@ -1,43 +1,32 @@
-; bootsector 1
-[org 0x7c00]
-[bits 16]
-	; setup base & stack pointer
-	mov bp, 0x8000   ; safe area from 0x7c00
-	mov sp, bp
+[bits 32]
+; rtfm please
+; https://wiki.osdev.org/Global_Descriptor_Table#System_Segment_Descriptor
+; Intel IA 64 too
 
-	mov bx, message
-	call print
+gdt_start:
+	dw 0x0000
+	dw 0x0000
 
-	;address of message
-	;mov dx, message
-	;call print_word
-	;call print_nl
+gdt_code:
+	dw 0xffff         ; 0-15
+	dw 0x0000         ; 0-15
 
-	mov dh, 0x02
-	mov bx, 0x9000   ; safe area from 0x8000
-	                 ; Memory address buffer for disk
-	call disk_load
+	dw 0x0000         ; 0-7
 
-	; print buffer
-	mov dx, [0x9000]
-	call print_word
-	call print_nl
+	db 10011010b      ; present, ring 00, code segment 11, executed from ring DPL 1, RW-able 1, Accesed (0)
+	                  ; 8-15
 
-	mov dx, [0x9000 + 512]
-	call print_word
-	call print_nl
+	db 11001111b      ; granulity set, 32-bit mode, not long mode, AVL (0) or reserved,
+	                  ; 0xffff -> 1111 (15) as the limit (4Gig)
+	                  ; 16-23
 
+	db 0x00           ; 24-31
 
-	jmp $
+gdt_data:
+	dw 0xffff
+	dw 0x0000
+	dw 0x0000
+	db 10010010b  ; Data segment, grows up
+	db 11001111b
+	db 0x00
 
-
-%include "print.asm"
-%include "disk.asm"
-
-message: db "hello world", 0xa, 0
-
-times 510 - ($-$$) db 0x00
-dw 0xaa55
-
-times 256 dw 0x0bad  ; drive sector 2
-times 256 dw 0x0dab  ; drive sector 3

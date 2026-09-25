@@ -4,6 +4,8 @@
 ; Intel IA 64 too
 
 gdt_start:
+
+gdt_null:
 	dw 0x0000
 	dw 0x0000
 
@@ -21,7 +23,6 @@ gdt_code:
 	                  ; 16-23
 
 	db 0x00           ; 24-31
-
 gdt_data:
 	dw 0xffff
 	dw 0x0000
@@ -30,3 +31,12 @@ gdt_data:
 	db 11001111b
 	db 0x00
 
+gdt_end:
+
+gdt_descriptor:
+	dw gdt_end - gdt_start - 1   ; 16 bits GDT size (idk why always - 1)
+	dd gdt_start                 ; gdt address
+
+; ADDRESSES
+CODE_SEGMENT equ gdt_code - gdt_start
+DATA_SEGMENT equ gdt_data - gdt_start

@@ -1,4 +1,4 @@
-boot.bin: boot.asm vga_print.asm switch32.asm
+boot.bin: boot.asm vga_print.asm switch32.asm gdt.asm
 	nasm -fbin boot.asm -o boot.bin
 
 .PHONY: qemu clean

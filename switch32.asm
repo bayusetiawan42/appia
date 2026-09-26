@@ -12,7 +12,7 @@ switch_to_32:
 	or eax, 0x0001
 	mov cr0, eax
 
-	 ; Make a far jump so it flush CPU pipeline
+	; Make a far jump so it flush CPU pipeline
 	jmp CODE_SEGMENT:init_32
 
 [bits 32]
@@ -31,5 +31,4 @@ init_32:
 	mov ebp, 0x90000
 	mov esp, ebp
 
-	; finally enter
 	call START_32
